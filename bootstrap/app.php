@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\JwtAuth;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,7 +14,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'jwt' => JwtAuth::class,
+        ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'lokasi',
+            'lokasi/*',
+            'ruang',
+            'ruang/*',
+            'perangkat',
+            'perangkat/*',
+            'meteran',
+            'meteran/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
