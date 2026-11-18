@@ -35,6 +35,7 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'user' => $user,
         ], 201);
+
     }
 
     public function login(Request $request)
@@ -59,5 +60,14 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return response()->json($request->user());
+    }
+    
+    public function refresh(Request $request)
+    {
+        return response()->json([
+            'access_token' => $this->makeToken($request->user()),
+            'token_type'   => 'bearer',
+            'user'         => $request->user(),
+        ]);
     }
 }

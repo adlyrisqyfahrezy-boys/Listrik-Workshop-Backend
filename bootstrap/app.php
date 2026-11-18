@@ -18,19 +18,17 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt' => JwtAuth::class,
         ]);
 
-        $middleware->validateCsrfTokens(except: [
-            'lokasi',
-            'lokasi/*',
-            'ruang',
-            'ruang/*',
-            'perangkat',
-            'perangkat/*',
-            'meteran',
-            'meteran/*',
+        $middleware->preventRequestForgery(except: [
+            'lokasi*',
+            'ruang*',
+            'perangkat*',
+            'meteran*',
+            'register',
+            'login',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+            fn (Request $request) => true,
         );
     })->create();
