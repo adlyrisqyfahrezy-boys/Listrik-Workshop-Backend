@@ -15,9 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'jwt' => JwtAuth::class,
-        ]);
-
+        'jwt'   => JwtAuth::class,
+        'admin' => \App\Http\Middleware\EnsureAdmin::class,
+    ]);
         $middleware->preventRequestForgery(except: [
             'lokasi*',
             'ruang*',
@@ -25,6 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'meteran*',
             'register',
             'login',
+            'profile*',
+            'refresh',
+            'users*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

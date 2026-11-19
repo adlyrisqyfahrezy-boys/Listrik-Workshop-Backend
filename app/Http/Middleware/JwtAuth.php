@@ -18,19 +18,23 @@ class JwtAuth
             return response()->json(['message' => 'Token tidak ada'], 401);
         }
 
-        try {
-            $payload = JWT::decode($token, new Key(config('app.jwt_secret'), 'HS256'));
-            $user = User::find($payload->sub);
-        } catch (\Throwable $e) {
-            return response()->json(['message' => 'Token tidak valid atau kedaluwarsa'], 401);
-        }
+            try {
+        $payload = JWT::decode($token, new Key(config('app.jwt_secret'), 'HS256'));
+        $user = User::find($payload->sub);
+    } catch (\Throwable $e) {
+        return response()->json(['message' => 'Token tidak valid atau kedaluwarsa'], 401);
+    }
 
-        if (! $user) {
-            return response()->json(['message' => 'User tidak ditemukan'], 401);
-        }
+    if (! $user) {
+        return response()->json(['message' => 'User tidak ditemukan'], 401);
+    }
 
-        $request->setUserResolver(fn () => $user);
+    if (! $user->is_active) {
+        return response()->json(['message' => 'Akun dinonaktifkan'], 403);
+    }
 
-        return $next($request);
+    $request->setUserResolver(fn () => $user);
+
+    return $next($request);
     }
 }
